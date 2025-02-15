@@ -1,55 +1,45 @@
+#define DOCTEST_CONFIG_IMPLEMENT
+#include "doctest.h"
 #include "BalancedLists.h"
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 
-int main() {
+TEST_CASE("EMPTY VECTOR") {
+    auto arr = createInitialList(0);
+    CHECK(arr.empty());
+}
+
+TEST_CASE("NORMAL VECTOR") {
+    auto arr = createInitialList(2);
+    std::vector<int> expected = {1, 1, -1, -1};
+    CHECK(arr == expected);
+}
+
+TEST_CASE("NON MIXED VECTOR") {
+    std::vector<int> arr = {1, 1, -1, -1};
+    CHECK(!hasMixedPrefixSums(arr));
+}
+
+TEST_CASE("MIXED VECTOR") {
+    std::vector<int> arr = {-1, 1, 1, -1};
+    CHECK(hasMixedPrefixSums(arr));
+}
+
+int main(int argc, char** argv) {
     std::srand(static_cast<unsigned int>(std::time(0)));
-    
-    runUnitTests();
-    std::cout << "Balanced lists unit tests passed!" << std::endl;
-    
-    int n;
-    std::cout << "\nEnter the number of pairs (n): ";
-    std::cin >> n;
-    
-    int numTrials;
-    std::cout << "Enter the number of trials: ";
-    std::cin >> numTrials;
-    
-    int countValid = 0;
-    int countNonNegative = 0;
-    int countNonPositive = 0;
-    
-    for (int trial = 0; trial < numTrials; ++trial) {
-        std::vector<int> sequence = createInitialList(n);
-        fisherYatesShuffle(sequence);
-
-        if (isWellBalanced(sequence)) {
-            ++countValid;
-            int prefix = 0;
-            bool allNonNegative = true;
-            bool allNonPositive = true;
-            for (int num : sequence) {
-                prefix += num;
-                if (prefix < 0)
-                    allNonNegative = false;
-                if (prefix > 0)
-                    allNonPositive = false;
-            }
-            if (allNonNegative)
-                ++countNonNegative;
-            if (allNonPositive)
-                ++countNonPositive;
-        }
+    doctest::Context context;
+    context.applyCommandLine(argc, argv);
+    int res = context.run();
+    if (context.shouldExit()) {
+        return res;
     }
-    
-    std::cout << "\n--- Simulation Results ---" << std::endl;
-    std::cout << "Total trials: " << numTrials << std::endl;
-    std::cout << "Well-balanced sequences: " << countValid << std::endl;
-    std::cout << "   Non-negative prefix sequences: " << countNonNegative << std::endl;
-    std::cout << "   Non-positive prefix sequences: " << countNonPositive << std::endl;
-    double ratio = static_cast<double>(countValid) / numTrials;
-    std::cout << "Ratio of well-balanced sequences: " << ratio << std::endl;
-    return 0;
+    int n, trials;
+    std::cout << "Enter the number of pairs (n): ";
+    std::cin >> n;
+    std::cout << "Enter the number of trials: ";
+    std::cin >> trials;
+    posNeg(trials, n);
+    return res;
 }

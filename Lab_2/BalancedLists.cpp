@@ -1,7 +1,8 @@
 #include "BalancedLists.h"
-#include <cstdlib>  
-#include <algorithm> 
-#include <cassert>
+#include <vector>
+#include <cstdlib>
+#include <algorithm>
+#include <iostream>
 
 std::vector<int> createInitialList(int n) {
     std::vector<int> vec;
@@ -14,42 +15,33 @@ std::vector<int> createInitialList(int n) {
 }
 
 void fisherYatesShuffle(std::vector<int>& vec) {
-    int n = vec.size();
-    for (int i = n - 1; i > 0; --i) {
+    int size = vec.size();
+    for (int i = size - 1; i > 0; --i) {
         int j = std::rand() % (i + 1);
         std::swap(vec[i], vec[j]);
     }
 }
 
-bool isWellBalanced(const std::vector<int>& vec) {
+bool hasMixedPrefixSums(const std::vector<int>& vec) {
     int prefix = 0;
-    bool allNonNegative = true;
-    bool allNonPositive = true;
+    bool hasPositive = false, hasNegative = false;
     for (int num : vec) {
         prefix += num;
-        if (prefix < 0)
-            allNonNegative = false;
-        if (prefix > 0)
-            allNonPositive = false;
+        if (prefix > 0) hasPositive = true;
+        if (prefix < 0) hasNegative = true;
     }
-    return (allNonNegative || allNonPositive);
+    return (hasPositive && hasNegative);
 }
 
-void runUnitTests() {
-    {
-        std::vector<int> seq = {1, -1};
-        assert(isWellBalanced(seq) && "Test 1 failed: [1, -1] should be balanced.");
+void posNeg(int trials, int n) {
+    int countMixed = 0;
+    for (int i = 0; i < trials; ++i) {
+        auto seq = createInitialList(n);
+        fisherYatesShuffle(seq);
+        if (hasMixedPrefixSums(seq))
+            countMixed++;
     }
-    {
-        std::vector<int> seq = {-1, 1};
-        assert(isWellBalanced(seq) && "Test 2 failed: [-1, 1] should be balanced.");
-    }
-    {
-        std::vector<int> seq = {1, -1, -1, 1};
-        assert(!isWellBalanced(seq) && "Test 3 failed: [1, -1, -1, 1] should not be balanced.");
-    }
-    {
-        std::vector<int> seq = {1, 1, -1, -1};
-        assert(isWellBalanced(seq) && "Test 4 failed: [1, 1, -1, -1] should be balanced.");
-    }
+    std::cout << "Number of sequences with both positive and negative prefix sums: " << countMixed << std::endl;
+    std::cout << "Total number of trials: " << trials << std::endl;
+    std::cout << "Ratio: " << static_cast<double>(countMixed) / trials << std::endl;
 }
