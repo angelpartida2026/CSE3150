@@ -3,10 +3,17 @@
 
 #include "Node.h"
 
-Node* build_linked_list(int n);
-void print_linked_list(Node* head);
-void delete_entire_linked_list(Node*& head);
-int get_linked_list_data_item_value(Node* head, int node_number);
-void delete_list_element(Node*& head, int node_number);
+class LinkedList {
+public:
+    Node* head;
+    LinkedList(int n);
+    LinkedList(const LinkedList &other);
+    ~LinkedList();
+    void print() const;
+    void deleteNode(int index);
+    int getValue(int index) const;
+    int prefixSumType() const; 
+    void pointerJumping();
+};
 
 #endif
