@@ -1,109 +1,102 @@
 #include "LinkedList.h"
 #include <iostream>
 
-LinkedList::LinkedList(int n) {
-    if(n <= 0) { head = nullptr; return; }
-    head = new Node(1);
-    Node* cur = head;
+Node* build_linked_list(int n) {
+    if(n <= 0) return nullptr;
+    Node* head = new Node(1);
+    Node* current = head;
     for(int i = 2; i <= n; i++){
-        cur->next = new Node(i);
-        cur = cur->next;
+        current->next = new Node(i);
+        current = current->next;
     }
-    cur->next = cur;
+    return head;
 }
 
-LinkedList::LinkedList(const LinkedList &other) {
-    if(!other.head) { head = nullptr; return; }
-    head = new Node(other.head->data);
-    Node* curNew = head;
-    Node* curOther = other.head;
-    while(curOther->next != curOther) {
-        curOther = curOther->next;
-        curNew->next = new Node(curOther->data);
-        curNew = curNew->next;
+void print_linked_list(Node* head) {
+    Node* current = head;
+    while(current){
+        std::cout << current->data << " ";
+        current = current->next;
     }
-    curNew->next = curNew;
 }
 
-LinkedList::~LinkedList() {
+void delete_entire_linked_list(Node*& head) {
+    delete head;
+    head = nullptr;
+}
+
+int get_linked_list_data_item_value(Node* head, int node_number) {
+    Node* current = head;
+    int count = 1;
+    while(current){
+        if(count == node_number)
+            return current->data;
+        current = current->next;
+        count++;
+    }
+    return -1;
+}
+
+void delete_list_element(Node*& head, int node_number) {
     if(!head) return;
-    Node* last = head;
-    while(last->next != last) last = last->next;
-    last->next = nullptr; 
-    while(head) {
+    if(node_number == 1){
         Node* temp = head;
         head = head->next;
-        delete temp;
-    }
-}
-
-void LinkedList::print() const {
-    if(!head) return;
-    Node* cur = head;
-    do {
-        std::cout << cur->data << " ";
-        cur = cur->next;
-    } while(cur != head);
-    std::cout << std::endl;
-}
-
-void LinkedList::deleteNode(int index) {
-    if(!head) return;
-    if(index == 1) {
-        if(head->next == head) { delete head; head = nullptr; return; }
-        Node* last = head;
-        while(last->next != head) last = last->next;
-        Node* temp = head;
-        head = head->next;
-        last->next = head;
         temp->next = nullptr;
         delete temp;
         return;
     }
-    Node* cur = head;
-    for(int i = 1; i < index - 1 && cur->next != head; i++) cur = cur->next;
-    if(cur->next == head) return;
-    Node* temp = cur->next;
-    cur->next = temp->next;
+    Node* current = head;
+    for(int i = 1; i < node_number - 1 && current; i++){
+        current = current->next;
+    }
+    if(!current || !current->next) return;
+    Node* temp = current->next;
+    current->next = temp->next;
     temp->next = nullptr;
     delete temp;
 }
 
-int LinkedList::getValue(int index) const {
-    if(!head) return -1;
-    Node* cur = head;
-    int count = 1;
-    do {
-        if(count == index)
-            return cur->data;
-        cur = cur->next;
-        count++;
-    } while(cur != head);
-    return -1;
+Node* copy_linked_list(Node* head) {
+    if (!head)
+        return nullptr;
+    return new Node(*head);
 }
 
-int LinkedList::prefixSumType() const {
-    if(!head) return 0;
+int check_prefix_sum(Node* head) {
+    if (!head)
+        return 0;
     int sum = 0;
-    bool nonneg = true, nonpos = true;
-    Node* cur = head;
-    do {
-        sum += cur->data;
-        if(sum < 0) nonneg = false;
-        if(sum > 0) nonpos = false;
-        cur = cur->next;
-    } while(cur != head);
-    return nonneg ? 1 : nonpos ? -1 : 0;
+    bool allPositive = true;
+    bool allNegative = true;
+    Node* current = head;
+    while(current){
+        sum += current->data;
+        if(sum <= 0)
+            allPositive = false;
+        if(sum >= 0)
+            allNegative = false;
+        current = current->next;
+    }
+    if(allPositive)
+        return 1;
+    else if(allNegative)
+        return -1;
+    else
+        return 0;
 }
 
-void LinkedList::pointerJumping() {
-    if(!head) return;
+void pointer_jumping(Node* head) {
+    if (!head)
+        return;
     Node* last = head;
-    while(last->next != head) last = last->next;
-    Node* cur = head;
-    while(cur && cur != last) {
-        cur->next = last;
-        cur = cur->next;
-        if(cur == last) break;
+    while(last->next) {
+        last = last->next;
+    }
+    Node* current = head;
+    while(current && current != last) {
+        Node* temp = current->next;
+        current->next = last;
+        current = temp;
     }
 }
