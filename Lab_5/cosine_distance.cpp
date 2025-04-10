@@ -13,7 +13,7 @@ double cosineDistance(const std::vector<double>& a, const std::vector<double>& b
     }
 
     double cosine = dot / (std::sqrt(magA) * std::sqrt(magB));
-    return 1.0 - cosine;  // Cosine distance
+    return 1.0 - cosine;
 }
 
 std::vector<std::tuple<int, int, double>> allPairwiseDistances(const std::vector<std::vector<double>>& vectors) {
