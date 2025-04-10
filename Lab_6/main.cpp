@@ -58,11 +58,11 @@ int main(int argc, char** argv) {
     std::cout << "\n--- Main Program Output ---\n";
     tokenizer.printTokens();
 
-    std::string word = "Jack";
+    std::string word = "smiling";
     int token = tokenizer.getToken(word);
     std::cout << "\nToken for '" << word << "': " << token << "\n";
 
-    int exampleToken = 10;
+    int exampleToken = 23;
     std::cout << "Word for token " << exampleToken << ": " << tokenizer.getWord(exampleToken) << "\n";
 
     return res;
